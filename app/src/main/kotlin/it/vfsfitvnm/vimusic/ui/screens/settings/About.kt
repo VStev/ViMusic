@@ -39,7 +39,7 @@ fun About() {
     ) {
         Header(title = "About") {
             BasicText(
-                text = "v${BuildConfig.VERSION_NAME} by vfsfitvnm",
+                text = "v${BuildConfig.VERSION_NAME}vRMX by vfsfitvnm (re-mixed by VStev)",
                 style = typography.s.secondary
             )
         }

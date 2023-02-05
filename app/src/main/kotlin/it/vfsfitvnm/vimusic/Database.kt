@@ -61,12 +61,12 @@ interface Database {
     companion object : Database by DatabaseInitializer.Instance.database
 
     @Transaction
-    @Query("SELECT * FROM Song WHERE totalPlayTimeMs > 0 ORDER BY ROWID ASC")
+    @Query("SELECT * FROM Song WHERE totalPlayTimeMs > 0 ORDER BY lastPlayed ASC")
     @RewriteQueriesToDropUnusedColumns
     fun songsByRowIdAsc(): Flow<List<Song>>
 
     @Transaction
-    @Query("SELECT * FROM Song WHERE totalPlayTimeMs > 0 ORDER BY ROWID DESC")
+    @Query("SELECT * FROM Song WHERE totalPlayTimeMs > 0 ORDER BY lastPlayed DESC")
     @RewriteQueriesToDropUnusedColumns
     fun songsByRowIdDesc(): Flow<List<Song>>
 
@@ -89,6 +89,9 @@ interface Database {
     @Query("SELECT * FROM Song WHERE totalPlayTimeMs > 0 ORDER BY totalPlayTimeMs DESC")
     @RewriteQueriesToDropUnusedColumns
     fun songsByPlayTimeDesc(): Flow<List<Song>>
+
+    @Query("UPDATE Song SET lastPlayed = :last WHERE id = :id")
+    fun updateLastPlayed(last: Long, id: String)
 
     fun songs(sortBy: SongSortBy, sortOrder: SortOrder): Flow<List<Song>> {
         return when (sortBy) {
@@ -366,7 +369,8 @@ interface Database {
             title = mediaItem.mediaMetadata.title!!.toString(),
             artistsText = mediaItem.mediaMetadata.artist?.toString(),
             durationText = mediaItem.mediaMetadata.extras?.getString("durationText"),
-            thumbnailUrl = mediaItem.mediaMetadata.artworkUri?.toString()
+            thumbnailUrl = mediaItem.mediaMetadata.artworkUri?.toString(),
+            lastPlayed = System.currentTimeMillis()
         ).let(block).also { song ->
             if (insert(song) == -1L) return
         }

@@ -13,7 +13,8 @@ data class Song(
     val durationText: String?,
     val thumbnailUrl: String?,
     val likedAt: Long? = null,
-    val totalPlayTimeMs: Long = 0
+    val totalPlayTimeMs: Long = 0,
+    val lastPlayed: Long? = 0
 ) {
     val formattedTotalPlayTime: String
         get() {

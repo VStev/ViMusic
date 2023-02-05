@@ -311,6 +311,17 @@ class PlayerService : InvincibleService(), Player.Listener, PlaybackStatsListene
 
         val totalPlayTimeMs = playbackStats.totalPlayTimeMs
 
+        coroutineScope.launch (Dispatchers.IO) {
+            try{
+                Database.updateLastPlayed(
+                    last = System.currentTimeMillis(),
+                    id = mediaItem.mediaId
+                )
+            }catch(_: SQLException){
+
+            }
+        }
+
         if (totalPlayTimeMs > 5000) {
             query {
                 Database.incrementTotalPlayTimeMs(mediaItem.mediaId, totalPlayTimeMs)
